@@ -13,9 +13,28 @@ rbtree *new_rbtree(void) {
   return p;
 }
 
+
+node_t * postOrder(rbtree *t, node_t * curr){
+    if(curr->left == t->nil && curr->right == t->nil){
+        return curr;
+    }
+    if(curr->left != t->nil){
+        free(postOrder(t, curr->left));
+    }
+    if(curr->right != t->nil){
+        free(postOrder(t, curr->right));
+    }
+    return curr;
+}
+
+
 void delete_rbtree(rbtree *t) {
-  // TODO: reclaim the tree nodes's memory
-  free(t);
+    // TODO: reclaim the tree nodes's memory
+    if(t->root != t->nil){
+        free(postOrder(t, t->root));
+    }
+    free(t->nil);
+    free(t);
 }
 
 void right_Rotate(rbtree *T, node_t *x){
@@ -292,7 +311,29 @@ int rbtree_erase(rbtree *t, node_t *p) {
   return 0;
 }
 
+void inOrder(const rbtree *t, node_t * curr, key_t *arr, size_t *pcnt, const size_t n){
+    if(curr == t->nil){
+        return;
+    }
+    inOrder(t, curr->left, arr, pcnt, n);
+    if(*pcnt < n){
+        arr[(*pcnt)++] = curr->key;
+    }
+    else{
+        return;
+    }
+    inOrder(t, curr->right, arr, pcnt, n);
+}
+
+
 int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
-  // TODO: implement to_array
-  return 0;
+    // TODO: implement to_array
+    if(t->root == t->nil){
+        return 0;
+    }
+    else{
+        size_t cnt = 0;
+        inOrder(t, t->root, arr, &cnt, n);
+    }
+    return 0;
 }
